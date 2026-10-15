@@ -263,7 +263,11 @@ Subject limit: time $O(n)$, space $O(n)$. Both are met.
 
 $$\|v\|_1 = \sum_{i=1}^{n} |v_i|, \qquad \|v\|_2 = \sqrt{\sum_{i=1}^{n} v_i^2}, \qquad \|v\|_\infty = \max_i |v_i|$$
 
-Reading: add the sizes, take the root of the sum of squares, or just keep the biggest size. The 2-norm is computed as $\|v\|_\infty \cdot \sqrt{\sum (v_i / \|v\|_\infty)^2}$, which is the same number but cannot overflow or underflow in the squares. The square root is `pow(x, 0.5)`, the only root allowed.
+Reading: add the sizes, take the root of the sum of squares, or just keep the biggest size. The 2-norm is computed as
+
+$$\|v\|_{\infty} \cdot \sqrt{\sum (v_{i} / \|v\|_{\infty})^{2}}$$
+
+which is the same number but cannot overflow or underflow in the squares. The square root is `pow(x, 0.5)`, the only root allowed.
 
 **Code** (`include/Vector.hpp`, lines 97-118):
 
@@ -302,7 +306,7 @@ Let $n$ be the number of coordinates. Each function is a sum over the loops it r
 - `norm_inf`: one loop of $n$ iterations, each doing `check_finite`, `ft_abs` and `std::max` (3 operations): $T_{\infty}(n) = 3n \in O(n)$.
 - `norm`: it first calls `norm_inf`, then runs its own loop of $n$ iterations, each doing one division and one `fma` (2 operations), then one `pow` and one check (constant).
 
-$$T_{2}(n) = \underbrace{3n}_{\text{norm\_inf}} + \underbrace{2n}_{\text{own loop}} + \underbrace{3}_{\text{pow}\text{, checks}} = 5n + 3 \in O(n)$$
+$$T_{2}(n) = \underbrace{3n}_{\text{norm}_{\infty}} + \underbrace{2n}_{\text{own loop}} + \underbrace{3}_{\text{pow}\text{, checks}} = 5n + 3 \in O(n)$$
 
 Making two passes instead of one only changes the constant ($2n$ is still linear), so the lower terms and constants are dropped.
 
@@ -363,7 +367,7 @@ Let $n$ be the common number of coordinates. Count one "pass" as a loop of $n$ c
 - `a.dot(b)`: 1 pass (ex03).
 - `a.norm()` and `b.norm()`: 2 passes each (`norm_inf`, then its own loop; ex04).
 
-$$T(n) = \underbrace{2n}_{\text{norm\_inf}\times 2} + \underbrace{2n}_{\text{copies}} + \underbrace{n}_{\text{shrink}} + \underbrace{n}_{\text{dot}} + \underbrace{4n}_{\text{norm}\times 2} + O(1) = 10n + O(1) \in O(n)$$
+$$T(n) = \underbrace{2n}_{\text{norm}_{\infty}\times 2} + \underbrace{2n}_{\text{copies}} + \underbrace{n}_{\text{shrink}} + \underbrace{n}_{\text{dot}} + \underbrace{4n}_{\text{norm}\times 2} + O(1) = 10n + O(1) \in O(n)$$
 
 A fixed number of passes (10) is a constant, so it is dropped.
 
@@ -742,7 +746,9 @@ Subject limit: time $O(n^{3})$, space $O(n^{2})$. Both are met.
 | `[[1, 2], [3, 4]]` | `[[-2, 1], [1.5, -0.5]]` |
 | `[[2, 0, 0], [0, 2, 0], [0, 0, 2]]` | `[[0.5, 0, 0], [0, 0.5, 0], [0, 0, 0.5]]` |
 
-Check of the first: `det = -2`, and $\frac{1}{-2}\begin{bmatrix} 4 & -2 \\ -3 & 1 \end{bmatrix} = \begin{bmatrix} -2 & 1 \\ 1.5 & -0.5 \end{bmatrix}$.
+Check of the first: `det = -2`, and
+
+$$\frac{1}{-2}\begin{bmatrix} 4 & -2 \\ -3 & 1 \end{bmatrix} = \begin{bmatrix} -2 & 1 \\ 1.5 & -0.5 \end{bmatrix}$$
 
 **Formula.**
 
@@ -775,7 +781,7 @@ Reading: write `A` next to the identity, run ex10 on the double-width matrix; th
         return inv;
 ```
 
-(`biggest` is `biggest_abs()`; an all-zero matrix and a non-square matrix throw earlier, an empty 0x0 matrix returns itself.) The inverse of a scaled matrix $A/s$ is $s\,A^{-1}$, which is why the result is divided by `biggest` at the end.
+(`biggest` is `biggest_abs()`; an all-zero matrix and a non-square matrix throw earlier, an empty 0x0 matrix returns itself.) The inverse of a scaled matrix $A/s$ is $s A^{-1}$, which is why the result is divided by `biggest` at the end.
 
 #### Complexity (proof)
 
@@ -790,7 +796,7 @@ $$T_{\text{echelon}}(n) \le \underbrace{6n^{2}}_{\text{copy, largest value, shri
 - The check `r(i, i) != 1`: $n$.
 - Copying out into `inv`: zero-fill $n^{2}$ and a loop of $n \cdot n$ iterations: $2n^{2}$.
 
-$$T(n) \le \underbrace{n^{2}}_{\text{biggest\_abs}} + \underbrace{3n^{2} + n}_{\text{build } w} + \underbrace{2n^{3} + 15n^{2}}_{\text{echelon}} + \underbrace{n}_{\text{check}} + \underbrace{2n^{2}}_{\text{copy out}} = 2n^{3} + 21n^{2} + 2n \in O(n^{3})$$
+$$T(n) \le \underbrace{n^{2}}_{\text{biggest abs}} + \underbrace{3n^{2} + n}_{\text{build } w} + \underbrace{2n^{3} + 15n^{2}}_{\text{echelon}} + \underbrace{n}_{\text{check}} + \underbrace{2n^{2}}_{\text{copy out}} = 2n^{3} + 21n^{2} + 2n \in O(n^{3})$$
 
 The dominant part is the elimination on the double-width matrix, $n \cdot n \cdot 2n = 2n^{3}$. The factor 2 and the lower terms are dropped.
 
@@ -848,7 +854,7 @@ Let $n = \max(\text{rows}, \text{cols})$, as in ex10. The function calls `row_ec
 - `row_echelon()`: $n^{3} + 7n^{2}$ (the ex10 proof).
 - The counting loop over `i` runs `rows` $\le n$ times and the inner loop over `j` runs `cols` $\le n$ times per row (it stops early at the first non-zero number, which only makes it cheaper), with one comparison inside: at most $n \cdot n$ operations.
 
-$$T(n) \le \underbrace{n^{3} + 7n^{2}}_{\text{row\_echelon}} + \underbrace{n^{2}}_{\text{count}} = n^{3} + 8n^{2} \in O(n^{3})$$
+$$T(n) \le \underbrace{n^{3} + 7n^{2}}_{\text{row echelon}} + \underbrace{n^{2}}_{\text{count}} = n^{3} + 8n^{2} \in O(n^{3})$$
 
 The counting pass is quadratic and is dropped next to the cubic elimination.
 
